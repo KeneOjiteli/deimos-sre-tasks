@@ -104,4 +104,7 @@ __Output from VM2 with IP 192.168.216.202__
 
 __Output from VM3 with IP 192.168.216.140__
 
-<video src="/Users/kenechukwuojiteli/Desktop/Kene-Deimos-Tasks/Module1/Demo-video.mp4"></video>
+<!--<video src="demo_vid.mp4"></video> -->
+![](images/LB-page1.png)
+
+![](images/LB-page2.png)
