@@ -132,6 +132,7 @@ The aim of this project is to containerize a php application running on Apache a
 
    - phpmyadmin container - `localhost:7081`
    ![](img/myadmin.png)
+   - database table values (mounting my data folder automatically created my table on the web interface).
    ![](img/db.png)
 
 
@@ -165,6 +166,7 @@ The aim of this project is to containerize a php application running on Apache a
 ## Best Practices Observed.
 - Used a .env file to store and manage sensitive information.
 - Created a .dockerignore file to store sensitive files to be excluded when building an image.
+- Created a .gitignore file to store files that will not be tracked by git.
 - Applied the principle of least privilege, I created another mysql user and restricted privileges.
 - Used official images as base images.
 
