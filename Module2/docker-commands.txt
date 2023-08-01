@@ -1,0 +1,16 @@
+- `docker info` - displays system wide information (such as kernel version, number of containers and images) regarding the Docker installation
+- `docker version` - displays the current version of docker installed on the user's machine.
+- `docker-compose up --build` - builds and starts multiple containers.
+- `docker-compose down` - stops and removes containers, volumes, networks, and images created by `docker-compose up`.
+- `docker inspect <networkname> /<containername>` - used to inspect a network or container.
+- `docker logs <containerid>` -shows information logged by a running container.
+- `docker-compose ps -a ` - shows a list of all containers (both running and exited containers).
+- `docker network rm <networkname>` - removes a network using the network name.
+- `docker images` - shows a list of all images.
+- `docker rmi <image(s)>` - removes image(s).
+- `docker network create --driver bridge <networkname>` - used to create a new network.
+- `docker run -d -p 7080:80 -v ./php:/var/www/html --env-file .env --network test-network --name app my-php-app` - runs a php-apache container.
+- `docker run -d --name interface -e PMA_HOST=db  --network test-network -p 7081:80 phpmyadmin:latest` - runs a phpmyadmin container.
+- `docker run -d --name db --network test-network -v dbdata:/var/lib/mysql -v ./data:/docker-entrypoint-initdb.d -e MYSQL_ROOT_PASSWORD=ninja1 -e MYSQL_DATABASE=feedback -e MYSQL_USER=kene -e MYSQL_PASSWORD=passwordtest -p 3307:3306 mysql:latest` - runs a mysql container.
+- `docker stop <containerid>` - used to stop a container.
+- `docker restart <containerid>` - used to restart a container to test for data persistence.
