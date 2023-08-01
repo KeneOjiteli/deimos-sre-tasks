@@ -44,6 +44,7 @@ The aim of this project is to containerize a php application running on Apache a
     - docker-compose.yml - a file that simplifies how multiple containers are created (instead of using docker run command multiple times). 
   - .dockerignore - contains files and folders that should be excluded when building a docker image.
   - .gitignore - contains files and folders that should not be tracked by git.
+  - docker-commands - contains all docker commands used while working on this task.
   - README.md - contains the detailed steps and guidelines for this project. 
 
 ## The steps taken involves 3 stages and they are:

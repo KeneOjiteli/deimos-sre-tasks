@@ -30,7 +30,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
-      USER: ${USER}
+      MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - 3306:3306
@@ -40,11 +40,11 @@ services:
 
     networks:
       - php-app-network
-    # healthcheck:
-    #   test: ["CMD", "mysqladmin", "ping", "-h", "db"]
-    #   interval: 20s
-    #   timeout: 10s
-    #   retries: 10
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "database"]
+      interval: 20s
+      timeout: 10s
+      retries: 10
 
  # web interface service for my db 
   phpmyadmin:
@@ -61,8 +61,44 @@ services:
     networks:
       - php-app-network
 
+  monitor:
+    container_name: prom-monitor
+    image: prom/prometheus:latest
+    volumes:
+        - ./prometheus.yml:/etc/prometheus/prometheus.yml
+        - prometheus_data:/prometheus
+    command:
+        - '-config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - 9090:9090 
+    networks:
+      - php-app-network
+
+  node-exporter:
+    container_name: exporter
+    image: prom/node-exporter:0.12.0rc1
+    ports:
+      - 9100:9100
+    networks:
+      - php-app-network
+
+  grafana:
+    image: grafana/grafana:3.0.0-beta7
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=pass
+    depends_on:
+      - monitor
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - php-app-network
+
 volumes:
   dbdata:
+  prometheus_data: {}
+  grafana_data: {}
 networks:
   php-app-network:
 
