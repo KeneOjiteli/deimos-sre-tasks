@@ -30,4 +30,4 @@ jobs:
                   context: /Module2/Task1/php
                   file: Dockerfile
                   push: true
-                  tags: $/php-app:latest
+                  tags: ${{ secrets.DOCKERHUB_USERNAME }}/php-app:latest
