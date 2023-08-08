@@ -52,7 +52,7 @@ The aim of this project is to containerize a php application running on Apache a
 - Containerizing the application using dockerfile.
 - Containerizing the application using docker-compose.
 
-#### Stage 2: Containerizing the application using dockerfile.
+#### Stage 1: Containerizing the application using dockerfile.
 - Download and install [homebrew](https://brew.sh/) and verify installation using `brew`
 - Install docker via brew using `brew install --cask docker`, it also installs docker-compose automatically.
 - Create project folders using the guide provided in folder structure.
@@ -75,7 +75,7 @@ The aim of this project is to containerize a php application running on Apache a
    ![](img/db.png)
 
 
-#### Stage 3: Containerizing the application using docker-compose.
+#### Stage 2: Containerizing the application using docker-compose.
 - Navigate to project folder on your code editor (VS code in my case), and create nesessary files (docker compose, .env, sql, html and php file).
 - On the docker compose file (which is a `yml` file), specify the version and the services (which is an array of containers which are to be built and run together when the docker-compose file is executed).
 - For each service, specify the service name, image, ports, environment variables, volumes etc.
@@ -110,7 +110,12 @@ The aim of this project is to containerize a php application running on Apache a
 - Used official images as base images.
 
 ## Over and Above
-- A work in progress!!!
+- This involves implementing the following features:
+  - Monitoring with prometheus and grafana (this can be done by integrating docker desktop with grafana cloud or using prometheus,grafana and exporter images) - my preferred choice was integrating docker desktop with [grafana cloud](https://www.docker.com/blog/unlock-docker-desktop-real-time-insights-with-the-grafana-docker-extension/) and adding docker desktop as a data source, this process is way easier and seamless.
+  
+  ![](img/gc.png)
+
+  - Setting a CICD pipeline when pushing image to dockerhub
 
 ## Challenges Encountered.
 - __Challenge 1__: I encountered an access denied error while trying to submit the form which will write data to mysql database.

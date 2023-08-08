@@ -1,8 +1,8 @@
-<?php   
-$host = "database"; #host == name of mysql service
+<?php  
+$host = getenv('DB_HOST'); #mysql service
 $db_name = getenv('MYSQL_DATABASE');
-$username = getenv('USER');
-$password = getenv('MYSQL_ROOT_PASSWORD');
+$username = getenv('MYSQL_USER');
+$password = getenv('MYSQL_PASSWORD');
 
 try{
 $connection = new PDO("mysql:host=" . $host . ";dbname=" . $db_name, $username, $password);

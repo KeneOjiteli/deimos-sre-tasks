@@ -37,7 +37,6 @@ services:
     volumes:
       - dbdata:/var/lib/mysql
       - ./db:/docker-entrypoint-initdb.d
-
     networks:
       - php-app-network
     healthcheck:
@@ -61,39 +60,74 @@ services:
     networks:
       - php-app-network
 
-  monitor:
+  mysqld_exporter:
+      container_name: mysqld_exporter
+      image: prom/mysqld-exporter
+      environment:
+        DATA_SOURCE_NAME: "${MYSQL_USER}:${MYSQL_PASSWORD}@tcp(database:3306)/${MYSQL_DATABASE}"
+      command: 
+        - "--collect.global_status"
+        - "--collect.info_schema.innodb_metrics"
+        - "--collect.auto_increment.columns"
+        - "--collect.info_schema.processlist"
+        - "--collect.binlog_size"
+        - "--collect.info_schema.tablestats"
+        - "--collect.global_variables"
+        - "--collect.info_schema.query_response_time"
+        - "--collect.info_schema.userstats"
+        - "--collect.info_schema.tables"
+        - "--collect.perf_schema.tablelocks"
+        - "--collect.perf_schema.file_events"
+        - "--collect.perf_schema.eventswaits"
+        - "--collect.perf_schema.indexiowaits"
+        - "--collect.perf_schema.tableiowaits"
+      ports:
+        - 9104:9104
+      depends_on:
+        - database
+      volumes:
+        - ./.my.cnf:/.my.cnf
+      networks:
+        - php-app-network
+
+  prometheus:
     container_name: prom-monitor
-    image: prom/prometheus:latest
+    image: prom/prometheus
     volumes:
         - ./prometheus.yml:/etc/prometheus/prometheus.yml
         - prometheus_data:/prometheus
     command:
-        - '-config.file=/etc/prometheus/prometheus.yml'
+        - '--config.file=/etc/prometheus/prometheus.yml'
     ports:
       - 9090:9090 
     networks:
       - php-app-network
 
+#  provides hardware and OS metrics
   node-exporter:
-    container_name: exporter
-    image: prom/node-exporter:0.12.0rc1
+    container_name: node-exporter
+    image: prom/node-exporter
     ports:
       - 9100:9100
     networks:
       - php-app-network
 
   grafana:
-    image: grafana/grafana:3.0.0-beta7
+    container_name: grafana
+    image: grafana/grafana
+    env_file:
+      - .env
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=pass
+      - GF_SECURITY_ADMIN_PASSWORD= ${GF_SECURITY_ADMIN_PASSWORD}
     depends_on:
-      - monitor
+      - prometheus
     ports:
       - 3000:3000
     volumes:
       - grafana_data:/var/lib/grafana
     networks:
       - php-app-network
+
 
 volumes:
   dbdata:
