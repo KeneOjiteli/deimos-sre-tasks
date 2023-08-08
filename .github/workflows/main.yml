@@ -22,15 +22,15 @@ jobs:
             - # create a build kit builder instance
                 name: Set up Docker Buildx
                 uses: docker/setup-buildx-action@v2
-            -   name: run
-                run: |
-                     pwd && ls
-            # - # build the container image and push it to Docker \
-            #     # Hub with the name php-app.
-            #     name: Build and push
-            #     uses: docker/build-push-action@v4
-            #     with:
-            #       context: ../../Module2/Task1/
-            #       file: Dockerfile
-            #       push: true
-            #       tags: ${{ secrets.DOCKERHUB_USERNAME }}/php-app:latest
+            # -   name: run
+            #     run: |
+            #          pwd && ls
+            - # build the container image and push it to Docker \
+                # Hub with the name php-app.
+                name: Build and push
+                uses: docker/build-push-action@v4
+                with:
+                  context: .
+                  file: ./Module2/Task1/Dockerfile
+                  push: true
+                  tags: ${{ secrets.DOCKERHUB_USERNAME }}/php-app:latest
