@@ -109,13 +109,13 @@ The aim of this project is to containerize a php application running on Apache a
 - Applied the principle of least privilege, I created another mysql user and restricted privileges.
 - Used official images as base images.
 
-## Over and Above
+## Over and Above.
 - This involves implementing the following features:
   - Monitoring with prometheus and grafana (this can be done by integrating docker desktop with grafana cloud or using prometheus,grafana and exporter images) - my preferred choice was integrating docker desktop with [grafana cloud](https://www.docker.com/blog/unlock-docker-desktop-real-time-insights-with-the-grafana-docker-extension/) and adding docker desktop as a data source, this process is way easier and seamless.
-  
+
   ![](img/gc.png)
 
-  - Setting a CICD pipeline when pushing image to dockerhub
+  - Setting a CICD pipeline when pushing image to dockerhub: A work in progress!!!
 
 ## Challenges Encountered.
 - __Challenge 1__: I encountered an access denied error while trying to submit the form which will write data to mysql database.
