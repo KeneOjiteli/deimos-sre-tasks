@@ -27,7 +27,7 @@ The aim of this project is to containerize a php application running on Apache a
 - Any Browser - to access a running container using host's port.
 - Terminal - used to build images and run containers.
 - A Code Editor (VS Code) - to edit source code and dockerfiles.
-- Git -for version control.
+- GitHub and Dockerhub account.
 
 ## Folder Structure.
 - Module2 - main folder for this project.
@@ -82,7 +82,7 @@ The aim of this project is to containerize a php application running on Apache a
 - On the `.env` file, specify the envrironment variables and credentials (it is advisable to put environment variables and credentials in an .env file so as to manage sensitive information consistently while maintaining its security).
 - `docker-compose up --build` - command builds the services, pulls the images and creates containers from those images, creates a network and attaches the network to the containers.
 
-- Output from containers running on localhost using their ports: it is similar to step 2 but with different ports: `localhost:8080/index.html` and `localhost:8081`.
+- Output from containers running on localhost using their ports: it is similar to step 2 but with different ports: `localhost:80/index.html` and `localhost:8081`.
 
 ## Docker Commands used. 
 - `docker info` - displays system wide information (such as kernel version, number of containers and images) regarding the Docker installation
@@ -111,11 +111,24 @@ The aim of this project is to containerize a php application running on Apache a
 
 ## Over and Above.
 - This involves implementing the following features:
-  - Monitoring with prometheus and grafana (this can be done by integrating docker desktop with grafana cloud or using prometheus,grafana and exporter images) - my preferred choice was integrating docker desktop with [grafana cloud](https://www.docker.com/blog/unlock-docker-desktop-real-time-insights-with-the-grafana-docker-extension/) and adding docker desktop as a data source, this process is way easier and seamless.
+  - Docker container monitoring
+  - Monitoring the performance of my docker containers using prometheus and grafana (this can be done by integrating docker desktop with grafana cloud or using prometheus,grafana and exporter images) - my preferred choice was integrating docker desktop with [grafana cloud](https://www.docker.com/blog/unlock-docker-desktop-real-time-insights-with-the-grafana-docker-extension/) and adding docker desktop as a data source (the location where data that is being used originates from), this process is way easier and seamless.
 
   ![](img/gc.png)
+  <!-- engine_daemon_container_states_containers{state="running"}
+  count (sum by (image) (container_last_seen{job=~".+", instance=~".+", name=~".+", image=~".+"})) -->
 
-  - Setting a CICD pipeline when pushing image to dockerhub: A work in progress!!!
+
+  <!-- - Setting a CICD pipeline when pushing image to dockerhub: A work in progress!!! -->
+  <!-- create an automated CI/CD build with GitHub and DockerHub -->
+  - Automating docker builds and push a Docker image to DockerHub with github actions: This was achieved by:
+    - Login in and creating access key from dockerhub which github actions will use to access dockerhub account.
+    - Add docker credentials (access token created earlier and username) as secrets on project repository.
+    - Setup a workflow that will build image, login to dockerhub and commit changes to push image to dockerhub.
+    ![](img/build-1.png)
+    ![](img/build1.png)
+    ![](img/build2.png)
+
 
 ## Challenges Encountered.
 - __Challenge 1__: I encountered an access denied error while trying to submit the form which will write data to mysql database.
