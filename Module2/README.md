@@ -111,8 +111,7 @@ The aim of this project is to containerize a php application running on Apache a
 
 ## Over and Above.
 - This involves implementing the following features:
-  - Docker container monitoring
-  - Monitoring the performance of my docker containers using prometheus and grafana (this can be done by integrating docker desktop with grafana cloud or using prometheus,grafana and exporter images) - my preferred choice was integrating docker desktop with [grafana cloud](https://www.docker.com/blog/unlock-docker-desktop-real-time-insights-with-the-grafana-docker-extension/) and adding docker desktop as a data source (the location where data that is being used originates from), this process is way easier and seamless.
+  - Monitoring the performance of my docker containers using prometheus and grafana (this can be done by integrating docker desktop with grafana cloud or using prometheus,grafana and exporter images) - my preferred choice was integrating docker desktop with [grafana cloud](https://www.docker.com/blog/unlock-docker-desktop-real-time-insights-with-the-grafana-docker-extension/) and adding docker desktop as a data source (the location where data that is being used originates from), this process is way easier and seamless. Other options I explored includes using the `docker stats ` command and pulling prometheus, grafana and node exporter images using prometheus as a data source.
 
   ![](img/gc.png)
   <!-- engine_daemon_container_states_containers{state="running"}
