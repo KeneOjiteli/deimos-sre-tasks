@@ -182,5 +182,9 @@ The aim of this project is to containerize a php application running on Apache a
 - __Cause__: this was caused by invalid login details. 
 - __Solution__: this was resolved by using the appropriate login details (for both other user and root while testing).
 
+- __Challenge 4__: I encountered a cName or service not known error while trying to submit the form which will write data to mysql database.
+- __Cause__: this was caused by inconsistency in environment variables across deployment file, secret file and php script. 
+- __Solution__: this was resolved by making the environment variables uniform.
+
 <!-- GRANT SELECT, INSERT, CREATE ON `feedback`.* TO `kene`@`%` WITH GRANT OPTION; -->
 

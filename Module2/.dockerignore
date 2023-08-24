@@ -3,3 +3,5 @@
 .env
 misc.md
 task2/.my.cnf
+k8s/mysql-secret.yml
+k8s/pvc.yml
