@@ -1,10 +1,17 @@
 # Containerizing a PHP Application linked to a MYSQL database using Apache as a Web Server.
 
-## Task.
+## Task (Including Containerizing and Orchestration).
 - Using a Web server, Dockerize a PHP application that is linked to a mysql database, Application should be accessible on your localhost and form should be able to write to database using containers and relevant networking,
 
 Additionally,
 - Use docker-compose to create the application and database backend and let data persist on container restart.
+
+- Create a kubernetes cluster locally, i.e. docker for desktop has 1 built in but Minikube, kind or k3s can be used
+Using the application and database containers you created in module 2:
+
+- Create a deployment manifest for application and a stateful set for the mysql instance
+
+- Expose application service so it's accessible like you have done with containers
 
 ## Aim and Learning Outcomes.
 The aim of this project is to containerize a php application running on Apache and connect to a mysql database. Learning outcomes include knowledge of docker containers, images, volumes, networks and web servers.
@@ -28,6 +35,7 @@ The aim of this project is to containerize a php application running on Apache a
 - Terminal - used to build images and run containers.
 - A Code Editor (VS Code) - to edit source code and dockerfiles.
 - GitHub and Dockerhub account.
+- Minikube or Docker desktop (which kubernetes will be enabled on) - which installs a single node kubernetes cluster.
 
 ## Folder Structure.
 - Module2 - main folder for this project.
@@ -48,9 +56,11 @@ The aim of this project is to containerize a php application running on Apache a
   - README.md - contains the detailed steps and guidelines for this project. 
 
 ## The steps taken involves 2 stages and they are:
-<!-- - Testing the application locally to ensure the application is functional.  -->
+- Testing the application locally to ensure the application is functional. 
 - Containerizing the application using dockerfile.
 - Containerizing the application using docker-compose.
+- Orchestrating the application with kubernetes (using deployment and statefulset).
+- Over and above Features (Implementing monitoring and Automating docker builds and pushing docker image to dockerhub using github actions).
 
 #### Stage 1: Containerizing the application using dockerfile.
 - Download and install [homebrew](https://brew.sh/) and verify installation using `brew`
@@ -102,6 +112,34 @@ The aim of this project is to containerize a php application running on Apache a
 - `docker stop <containerid>` - used to stop a container.
 - `docker restart <containerid>` - used to restart a container to test for data persistence.
 
+## Orchestrating the application with kubernetes (using deployment and statefulset).
+- Create a secret which will contain all the sensitive data (encode credentials using `echo -n 'value' | base64`).
+- Create a deployment manifest for the stateless application (that is the php application), specify the number of replica, image, needed credentials as environment variables, and a service.
+- Create a statefulset for the stateful application (the mysql) and specify the service (a headless service), credentials (which will be passed as env variables from the secret file), volume claim template (which is a list of claims that pods are allowed to reference) which will use the default storage class, and also volume mounts (this is the path in the container on which the mounting will take place).
+- Note that volumeMounts.name == volumeClaimTemplates.metadata.name.
+- Create the Secret using `kubectl create -f <nameofsecretfile.yml>` (Note that this should be created before it is referenced by other kubernetes resources).
+- Create deployment and stateful set using `kubectl create -f <filename.yml>`.
+- Use `kubectl get pods,svc,pv,pvc,sc,secret` to view what was just created.
+- Accessing the shell of my php pod using `kubectl exec --stdin --tty <pod-name>  -- sh`
+- Install a package that will help php pod communicate with mysql pod using `apt install mariadb-client` (initially used `apk add mysql-client && apk add mariadb-connector-c`).
+- While inside the shell of the pod, create a folder in the current directory to copy the sql file present in my local folder. 
+- Outside the pod's shell above,  copy my `data.sql` file to php pod using `kubectl cp <pathtolocalfile>  <pod-name>:<pathinpodfile>` for example: (`kubectl cp /Users/kenechukwuojiteli/Desktop/Kene-Deimos-Tasks/Module2/k8s/data.sql php-app-deployment-86758d497-nr2pk:/var/www/html/mysql`) to the folder created in the pod.
+- Login to mysql from the php container's shell specifying username, hostname, database name and the the path containing the sql file `mysql -u kene1 -p -h mysql-statefulset-0.mysql-service.default feedback < /var/www/html/mysql/data.sql`, this command will prompt you for a password.
+- Login to mysql container from the php container's shell (first as a root user, then create a new user and grant privileges with `GRANT ALL PRIVILEGES ON *.* TO '<newuser>'@'%';`) using `mysql -u kene1 -p  -h mysql-statefulset-0.mysql-service.default`(-h is the hostname which is gotten by: `podname.servicename.namespace` of statefulset).
+- `show databases;` - to view the databases already available.
+- `create database <dbname>;`- to create a database.
+- `use <dbname>;` - to use the named database as the default (current) database for subsequent statements.
+- `show tables` - shows the tables in the current database (notice that a db table is available, this is because we appended the sql file to the database, done 5 steps above).
+- Access the php application on a browser and try to submit data (ensure that the env variables are included in the php deployment, making sure to note that the env variable `name` corresponds with key value in .env file and also corresponds with env variables passed to the php script ) as seen below:
+
+![](img/php-val.png)
+
+![](img/secrets-val.png)
+
+![](img/deploy-val.png)
+
+- After writing to the database, the db will be queried with `select * from martians;` to see values.
+![](img/db-val.png)
 ## Best Practices Observed.
 - Used a .env file to store and manage sensitive information.
 - Created a .dockerignore file to store sensitive files to be excluded when building an image.

@@ -1,0 +1,86 @@
+apiVersion: v1
+# services are the objects that pods use to communicate with each othe
+kind: Service
+metadata:
+  name: mysql-service
+  labels:
+    app: mysql
+spec:
+# shows this is a headless service
+  clusterIP: None
+  selector:
+    app: mysql
+  ports:
+    - name: tcp
+      protocol: TCP
+      port: 3306
+
+# ---
+# apiVersion: storage.k8s.io/v1
+# kind: StorageClass
+# metadata:
+#   name: mysql-sc
+# provisioner: kubernetes.io/no-provisioner
+# allowVolumeExpansion: true
+# volumeBindingMode: WaitForFirstConsumer
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-statefulset
+spec:
+  replicas: 2
+  serviceName: mysql-service
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: mysql
+          image: mysql:latest
+          ports:
+            - name: tpc
+              protocol: TCP
+              containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom: 
+               secretKeyRef: 
+                key: MYSQL_ROOT_PASSWORD
+                name: mysql-secret
+
+            - name: MYSQL_USER
+              valueFrom: 
+               secretKeyRef: 
+                key: MYSQL_USER
+                name: mysql-secret
+
+            - name: MYSQL_PASSWORD
+              valueFrom: 
+               secretKeyRef: 
+                key: MYSQL_PASSWORD
+                name: mysql-secret
+#this is where the volume will be mounted on the container 
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+    - metadata:
+        name: mysql-data
+      spec:
+# Using the default storage class 
+        # storageClassName: mysql-sc
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+
+
+

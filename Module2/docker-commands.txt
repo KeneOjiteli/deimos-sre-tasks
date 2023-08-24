@@ -14,3 +14,14 @@
 - docker run -d --name db --network test-network -v dbdata:/var/lib/mysql -v ./data:/docker-entrypoint-initdb.d -e MYSQL_ROOT_PASSWORD=ninja1 -e MYSQL_DATABASE=feedback -e MYSQL_USER=kene -e MYSQL_PASSWORD=passwordtest -p 3307:3306 mysql:latest - runs a mysql container.
 - docker stop <containerid> - used to stop a container.
 - docker restart <containerid> - used to restart a container to test for data persistence.
+
+Kubernetes Commands
+- kubectl apply -f <deployment-file-name.yml> - used to create deployment.
+- kubectl get all
+- kubectl config current-context 
+- kubectl explain statefulset - used to show documentation about Kubernetes resources like statefulset
+- kubectl explain statefulset.spec
+- kubectl create -f storageclass.yml
+- kubectl create -f pvc.yml
+- kubectl get pvc
+- kubectl get pv
