@@ -147,7 +147,7 @@ The aim of this project is to containerize a php application running on Apache a
 - Created a .gitignore file to store files that will not be tracked by git.
 - Applied the principle of least privilege, I created another mysql user and restricted privileges.
 - Used official images as base images.
-- Used kubernetes to store credentials.
+- Used kubernetes secrets to store credentials.
 
 ## Over and Above.
 - This involves implementing the following features:
