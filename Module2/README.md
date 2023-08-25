@@ -113,6 +113,7 @@ The aim of this project is to containerize a php application running on Apache a
 - `docker restart <containerid>` - used to restart a container to test for data persistence.
 
 ## Orchestrating the application with kubernetes (using deployment and statefulset).
+- This stage involves checking that the pods can communicate with each other and the application can write data to the database on the cluster. 
 - Create a secret which will contain all the sensitive data (encode credentials using `echo -n 'value' | base64`).
 - Create a deployment manifest for the stateless application (that is the php application), specify the number of replica, image, needed credentials as environment variables, and a service.
 - Create a statefulset for the stateful application (the mysql) and specify the service (a headless service), credentials (which will be passed as env variables from the secret file), volume claim template (which is a list of claims that pods are allowed to reference) which will use the default storage class, and also volume mounts (this is the path in the container on which the mounting will take place).
@@ -120,11 +121,11 @@ The aim of this project is to containerize a php application running on Apache a
 - Create the Secret using `kubectl create -f <nameofsecretfile.yml>` (Note that this should be created before it is referenced by other kubernetes resources).
 - Create deployment and stateful set using `kubectl create -f <filename.yml>`.
 - Use `kubectl get pods,svc,pv,pvc,sc,secret` to view what was just created.
-- Accessing the shell of my php pod using `kubectl exec --stdin --tty <pod-name>  -- sh`
+- Accessing the shell of my php pod using `kubectl exec --stdin --tty <pod-name>  -- sh` (I will also check to see if the pods can communicate with each other).
 - Install a package that will help php pod communicate with mysql pod using `apt install mariadb-client` (initially used `apk add mysql-client && apk add mariadb-connector-c`).
 - While inside the shell of the pod, create a folder in the current directory to copy the sql file present in my local folder. 
 - Outside the pod's shell above,  copy my `data.sql` file to php pod using `kubectl cp <pathtolocalfile>  <pod-name>:<pathinpodfile>` for example: (`kubectl cp /Users/kenechukwuojiteli/Desktop/Kene-Deimos-Tasks/Module2/k8s/data.sql php-app-deployment-86758d497-nr2pk:/var/www/html/mysql`) to the folder created in the pod.
-- Login to mysql from the php container's shell specifying username, hostname, database name and the the path containing the sql file `mysql -u kene1 -p -h mysql-statefulset-0.mysql-service.default feedback < /var/www/html/mysql/data.sql`, this command will prompt you for a password.
+- Login to mysql from the php container's shell specifying username, hostname, database name and the the path containing the sql file `mysql -u kene1 -p -h mysql-statefulset-0.mysql-service.default feedback < /var/www/html/mysql/data.sql`, this command will prompt you for a password (this mounts the sql file containing sql command to create the db table to the database).
 - Login to mysql container from the php container's shell (first as a root user, then create a new user and grant privileges with `GRANT ALL PRIVILEGES ON *.* TO '<newuser>'@'%';`) using `mysql -u kene1 -p  -h mysql-statefulset-0.mysql-service.default`(-h is the hostname which is gotten by: `podname.servicename.namespace` of statefulset).
 - `show databases;` - to view the databases already available.
 - `create database <dbname>;`- to create a database.
@@ -146,6 +147,7 @@ The aim of this project is to containerize a php application running on Apache a
 - Created a .gitignore file to store files that will not be tracked by git.
 - Applied the principle of least privilege, I created another mysql user and restricted privileges.
 - Used official images as base images.
+- Used kubernetes to store credentials.
 
 ## Over and Above.
 - This involves implementing the following features:

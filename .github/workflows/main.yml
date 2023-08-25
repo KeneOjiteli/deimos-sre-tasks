@@ -1,7 +1,7 @@
 name: php-docker-app
 
 on: # specify the build to trigger the automated ci/cd
-    push:
+    pull:
         branches:
             - "main"
 
