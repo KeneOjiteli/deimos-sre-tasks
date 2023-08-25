@@ -40,6 +40,7 @@ The aim of this project is to containerize a php application running on Apache a
 ## Folder Structure.
 - Module2 - main folder for this project.
   - img - contains screenshots of my progress while carrying out this task.
+  - k8s - contains requiremts for creating kubernetes deployment and statefulset.
   - Task1 - contains folders which will be used to create 3 containers (1 php running on apache, 1 mysql and 1 phpmyadmin) that will connect on the same network.
     - data - contains the `sql` file that will be mounted to the mysql container as a volume.
     - php - contains the `.html` and `.php` source code.
