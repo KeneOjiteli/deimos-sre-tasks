@@ -1,20 +1,3 @@
-apiVersion: v1
-# services are the objects that pods use to communicate with each othe
-kind: Service
-metadata:
-  name: mysql-service
-  labels:
-    app: mysql
-spec:
-# shows this is a headless service
-  clusterIP: None
-  selector:
-    app: mysql
-  ports:
-    - name: tcp
-      protocol: TCP
-      port: 3306
-
 # ---
 # apiVersion: storage.k8s.io/v1
 # kind: StorageClass

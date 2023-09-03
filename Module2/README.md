@@ -56,7 +56,7 @@ The aim of this project is to containerize a php application running on Apache a
   - docker-commands - contains all docker commands used while working on this task.
   - README.md - contains the detailed steps and guidelines for this project. 
 
-## The steps taken involves 2 stages and they are:
+## The steps taken involves 5 stages and they are:
 - Testing the application locally to ensure the application is functional. 
 - Containerizing the application using dockerfile.
 - Containerizing the application using docker-compose.
