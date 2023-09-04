@@ -11,10 +11,10 @@ Using the application and database containers you created in module 2:
 
 - Create a deployment manifest for application and a stateful set for the mysql instance
 
-- Expose application service so it's accessible like you have done with containers
+- Expose application service so it's accessible like you have done with containers.
 
 ## Aim and Learning Outcomes.
-The aim of this project is to containerize a php application running on Apache and connect to a mysql database. Learning outcomes include knowledge of docker containers, images, volumes, networks and web servers.
+The aim of this project is to containerize a php application running on Apache and connect to a mysql database. Learning outcomes include knowledge of docker containers, images, volumes, networks, web servers and container orchestration.
 
 ## Important Terms to note.
 - `Docker` - an open platform for developing, shipping, and running applications. Docker enables you to separate your applications from your infrastructure so you can deliver software quickly.
@@ -26,6 +26,12 @@ The aim of this project is to containerize a php application running on Apache a
 - `Docker Compose` - a tool used to setup multi-containers.
 - `Web server` - a computer program that accepts and responds to requests from clients eg Apache.
 - `Apache` - a free and open-source software that is used to serve web pages and other content over the internet.
+- `Kubernetes` - an open-source system for automating deployment, scaling, and management of containerized applications.
+- `Clusters` - a set of nodes that run containerized applications.
+- `Nodes` - a set of worker machines, that run containerized applications.
+- `Pods` - the smallest deployable units of computing that can be created and managed in Kubernetes.
+- `Services` - used for exposing a network application that is running as one or more Pods in a cluster.
+- `kubectl` - a command line tool for communicating with a Kubernetes cluster's control plane, using the Kubernetes API.
 
 ## Requirements.
 <!-- - Virtual Machine - to test application locally. -->
@@ -40,7 +46,7 @@ The aim of this project is to containerize a php application running on Apache a
 ## Folder Structure.
 - Module2 - main folder for this project.
   - img - contains screenshots of my progress while carrying out this task.
-  - k8s - contains requiremts for creating kubernetes deployment and statefulset.
+  - k8s - contains requirements for creating kubernetes deployment and statefulset.
   - Task1 - contains folders which will be used to create 3 containers (1 php running on apache, 1 mysql and 1 phpmyadmin) that will connect on the same network.
     - data - contains the `sql` file that will be mounted to the mysql container as a volume.
     - php - contains the `.html` and `.php` source code.
