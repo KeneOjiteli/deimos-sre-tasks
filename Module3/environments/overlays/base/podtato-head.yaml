@@ -16,7 +16,7 @@ spec:
     targetRevision: HEAD
     helm:
       releaseName: podtatohead
-      #commenting this because I am not deploying with helm chart
+      # commenting this because I am not deploying with helm chart
       # values: |
       #   fullnameOverride: podtatohead
       #   image:
@@ -38,6 +38,8 @@ spec:
       - CreateNamespace=true
     retry:
       limit: -1
+
+      
 
 
 
