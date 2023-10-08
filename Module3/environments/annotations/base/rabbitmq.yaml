@@ -1,0 +1,8 @@
+---
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  annotations:
+    rabbitmq.com/topology-allowed-namespaces: "observability"
+  name: mycluster
+  namespace: rabbitmq

@@ -1,0 +1,57 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: container=localhost:5000/node-web-app
+    argocd-image-updater.argoproj.io/write-back-method: argocd
+    argocd-image-updater.argoproj.io/dex.helm.image-name: container.image.repository
+    argocd-image-updater.argoproj.io/dex.helm.image-tag: container.image.tag
+    argocd-image-updater.argoproj.io/container.update-strategy: semver
+    argocd-image-updater.argoproj.io/container.platforms: linux/amd64,linux/arm64
+    # Only deploy this to the local environment
+    deimos.io/environment-local: deploy
+    # deimos.io/environment-development: deploy
+  name: node-web-app
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  # The ArgoCD project that this application is part of.
+  project: kene-cicd-project
+  source:
+    # The Repo where this file is stored.
+    repoURL: https://github.com/DeimosCloud/kene-cicd.git
+    # The helm chart that will deploy this application.
+    path: charts/generic
+    # The branch, HEAD is the default branch which is main
+    targetRevision: HEAD
+    helm:
+      releaseName: node-web-app
+      values: |
+        fullnameOverride: node-web-app
+        image:
+          # The container registry where the container is located.
+          repository: localhost:5000/node-web-app
+          # The container image tag
+          tag: 0.0.1
+          # tag: 0.0.2
+        livenessProbe: {}  
+        podAnnotations:
+             instrumentation.opentelemetry.io/inject-sdk: observability/instrumentation    
+        readinessProbe: {}
+        service:
+          port: 8081
+  destination:
+    server: https://kubernetes.default.svc
+    # The namespace where this application will be deployed
+    namespace: myapp
+  syncPolicy:
+    #Enables automatic sync with repository
+    # ArgoCD polls git repository every 3 minutes 
+    automated:
+      selfHeal: true
+      #Creates a namespace if it is not available while deploying this application 
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: -1

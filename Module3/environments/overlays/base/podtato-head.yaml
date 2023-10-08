@@ -1,0 +1,47 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: container=localhost:5000/node-web-app
+    deimos.io/environment-local: deploy
+  name: podtato-head
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: kene-cicd-project
+  source:
+    repoURL: https://github.com/DeimosCloud/kene-cicd.git
+    path: src/podtatohead/delivery/chart
+    targetRevision: HEAD
+    helm:
+      releaseName: podtatohead
+      #commenting this because I am not deploying with helm chart
+      # values: |
+      #   fullnameOverride: podtatohead
+      #   image:
+      #     repository: localhost:5000/podtatohead
+      #     tag: latest
+      # livenessProbe: {}
+      podAnnotations:
+            instrumentation.opentelemetry.io/inject-sdk: observability/instrumentation
+      readinessProbe: {}
+      service:
+          port: 9000
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: myapp
+  syncPolicy:
+    automated:
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: -1
+
+
+
+
+
+
+

@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  annotations:
+    deimos.io/environment-local: deploy
+    deimos.io/environment-development: deploy
+    deimos.io/environment-staging: deploy
+    deimos.io/environment-production: deploy
+  name: tekton
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/DeimosCloud/gitops-tekton.git
+    targetRevision: HEAD
+    path: environments/bootstrap
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      selfHeal: true
+    retry:
+      limit: -1
+
+      

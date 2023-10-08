@@ -1,0 +1,100 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  annotations:
+    deimos.io/environment-local: deploy
+    deimos.io/environment-development: deploy
+    deimos.io/environment-staging: deploy
+    deimos.io/environment-production: deploy
+  labels:
+    argocd.argoproj.io/secret-type: repository
+  name: kene-cicd
+  namespace: argocd
+stringData:
+  type: git
+
+  url: https://github.com/DeimosCloud/kene-cicd.git
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  annotations:
+    deimos.io/environment-local: deploy
+    deimos.io/environment-development: deploy
+    deimos.io/environment-staging: deploy
+    deimos.io/environment-production: deploy
+  name: kene-cicd-project
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  description: kene-cicd
+  sourceRepos:
+    - "*"
+  destinations:
+    - namespace: "*"
+      server: "*"
+  clusterResourceWhitelist:
+    - group: "*"
+      kind: "*"
+  namespaceResourceWhitelist:
+    - group: "*"
+      kind: "*"
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+    deimos.io/environment-local: deploy
+    deimos.io/environment-development: deploy
+    deimos.io/environment-staging: deploy
+    deimos.io/environment-production: deploy
+  name: kene-cicd
+  namespace: argocd
+spec:
+  project: kene-cicd-project
+  source:
+  
+    repoURL: https://github.com/DeimosCloud/kene-cicd.git
+  
+    targetRevision: HEAD
+    path: environments/overlays/local
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      selfHeal: true
+    retry:
+      limit: -1
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+    deimos.io/environment-local: deploy
+    deimos.io/environment-development: deploy
+    deimos.io/environment-staging: deploy
+    deimos.io/environment-production: deploy
+  name: kene-cicd-annotations
+  namespace: argocd
+spec:
+  project: kene-cicd-project
+  source:
+  
+    repoURL: https://github.com/DeimosCloud/kene-cicd.git
+    
+    targetRevision: HEAD
+    path: environments/annotations/local
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      selfHeal: true
+    retry:
+      limit: -1

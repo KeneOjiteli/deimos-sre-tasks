@@ -1,0 +1,129 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: node-web-app-build
+  namespace: tekton-runs
+spec:
+  description: >-
+    The pipeline will build the node-web-app and loadgenerator containers and publish them to the local container registry
+  params:
+    - name: repo
+      description: The git repo
+      # default: https://github.com/deimoscloud/myapp.git
+      default: https://github.com/DeimosCloud/kene-cicd.git
+    - name: revision
+      description: The git revision to use
+      default: main
+  tasks:
+    - name: git-clone
+      taskRef:
+        name: git-clone
+      params:
+        - name: url
+          value: $(params.repo)
+        - name: revision
+          value: $(params.revision)
+        - name: deleteExisting
+          value: "true"
+        - name: depth
+          value: "0"
+      workspaces:
+        - name: output
+          workspace: source
+    # - name: lint-environments
+    #   taskRef:
+    #     name: yaml-lint
+    #   runAfter:
+    #     - git-clone
+    #   workspaces:
+    #     - name: shared-workspace
+    #       workspace: source
+    #   params:
+    #     - name: args
+    #       value: ["./environments"]
+    - name: git-version
+      taskRef:
+        name: git-version
+      runAfter:
+        - git-clone
+      workspaces:
+        - name: source
+          workspace: source
+      params:
+        - name: branch
+          value: $(params.revision)
+    - name: build-node-web-app
+      taskRef:
+        name: buildpacks
+      runAfter:
+        - git-version
+      params:
+        - name: SOURCE_SUBPATH
+          value: src/node-web-app
+        - name: APP_IMAGE
+          value: registry.kube-system.svc.cluster.local:80/node-web-app:$(tasks.git-version.results.packageVersion)
+        - name: BUILDER_IMAGE
+          value: paketobuildpacks/builder:base
+      workspaces:
+        - name: source
+          workspace: source 
+    - name: scan-node-web-app
+      taskRef:
+        name: grype
+        kind: Task
+      runAfter:
+        - build-node-web-app
+      params:
+        - name: ARGS
+          value:
+            - registry.kube-system.svc.cluster.local:80/node-web-app:$(tasks.git-version.results.packageVersion)                   
+
+    - name: build-loadgenerator
+      taskRef:
+        name: buildpacks
+      runAfter:
+        - git-version
+      params:
+        - name: SOURCE_SUBPATH
+          value: src/loadgenerator
+        - name: APP_IMAGE
+          value: registry.kube-system.svc.cluster.local:80/loadgenerator:$(tasks.git-version.results.packageVersion)
+        - name: BUILDER_IMAGE
+          value: paketobuildpacks/builder:base
+      workspaces:
+        - name: source
+          workspace: source 
+
+
+  results:
+    - name: version
+      description: the version of the containers
+      value: $(tasks.git-version.results.packageVersion)  
+  workspaces:
+    - name: source
+
+---
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  annotations:
+    chains.tekton.dev/signed: 'true'
+  generateName: test-node-web-app-build-
+  labels:
+    app.kubernetes.io/instance: gitops-tekton-annotations
+  name: test-node-web-app-build
+  namespace: tekton-runs
+spec:
+  pipelineRef:
+    name: node-web-app-build
+  serviceAccountName: github-deimoscloud
+  timeout: 1h0m0s
+  workspaces:
+    - name: source
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 100Mi

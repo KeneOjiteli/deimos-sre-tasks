@@ -1,0 +1,21 @@
+./setup-cluster.sh
+./scripts/build-and-push-local.sh
+minikube profile list
+minikube status --profile kene-cicd
+minikube start --profile kene-cicd  --memory=8192 --cpus=6
+kubectl get svc -n observability 
+kubectl get pods -A 
+kubectl get namespaces -A
+kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+kubectl port-forward service/podtatohead-podtato-head-entry  -n myapp 9090:9000
+kubectl port-forward svc/tekton-dashboard -n tekton-pipelines 9097:9097
+kubectl port-forward svc/loadgenerator -n myapp 8089:8089
+kubectl port-forward svc/allinone-query -n observability 16686:16686
+kubectl api-resources   
+
+kubectl port-forward svc/kube-prometheus-stack-prometheus -n observability 9090:9090
+
+ helm search hub mysql
+ helm repo ls
+ helm status my-sql -n myapp 

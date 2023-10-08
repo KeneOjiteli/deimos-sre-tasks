@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  annotations:
+    deimos.io/environment-local: deploy
+  name: loadgenerator
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: kene-cicd-project
+  source:
+    repoURL: https://github.com/DeimosCloud/kene-cicd.git
+    path: charts/generic
+    targetRevision: HEAD
+    helm:
+      releaseName: loadgenerator
+      values: |
+        fullnameOverride: loadgenerator
+        image:
+          repository: localhost:5000/loadgenerator
+          tag: latest
+        livenessProbe: {}
+        podAnnotations:
+            instrumentation.opentelemetry.io/inject-sdk: observability/instrumentation
+        readinessProbe: {}
+        service:
+          port: 8089
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: myapp
+  syncPolicy:
+    automated:
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: -1
