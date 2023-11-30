@@ -1,0 +1,43 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  annotations:
+    deimos.io/environment-local: deploy
+  name: elasticsearch
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: kene-cicd-project
+  source:
+    repoURL: https://helm.elastic.co
+    targetRevision: 8.5.1
+    chart: elasticsearch
+    helm:
+      releaseName: elasticsearch
+      values: |
+        readinessProbe:
+          exec:
+            command:
+            - bash
+            - -c
+            - |
+              # Always exit with success
+              exit 0 
+        replicas: 1
+        minimumMasterNodes: 1
+        antiAffinity: "soft"
+        esJavaOpts: "-Xmx128m -Xms128m"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: myapp
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 3
+      backoff:
+        # duration: 10
+        factor: 2

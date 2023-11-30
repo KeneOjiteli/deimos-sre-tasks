@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  annotations:
+    deimos.io/environment-local: deploy
+  name: grafana-agent
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: kene-cicd-project
+  source:
+    chart: grafana-agent
+    repoURL: https://grafana.github.io/helm-charts 
+    targetRevision: 0.27.0
+    helm:
+      # releaseName: grafana
+      values: |
+        livenessProbe: {} 
+        readinessProbe: {}
+        mysqld_exporter:
+          enabled: true
+        #   data_source_name: "root:password@(mysql:3306)/"
+        #   relabel_configs:
+        #   - source_labels: [__address__]
+        #     target_label: instance
+        #     replacement: mysql
+        # controller:
+        #   type: 'statefulset'
+        # volumeClaimTemplates: agent-wal
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: myapp
+  syncPolicy:
+    automated:
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: -1

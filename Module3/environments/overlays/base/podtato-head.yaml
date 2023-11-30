@@ -38,9 +38,3 @@ spec:
       - CreateNamespace=true
     retry:
       limit: -1
-
-
-
-
-
-

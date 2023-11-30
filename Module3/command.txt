@@ -1,0 +1,55 @@
+Some commands I used for Module 3 and 4
+
+./setup-cluster.sh
+./scripts/build-and-push-local.sh
+minikube profile list
+minikube status --profile kene-cicd
+minikube start --profile kene-cicd --memory=8192 --cpus=8
+kubectl get svc -n observability 
+kubectl get pods -A 
+kubectl get namespaces -A
+kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+kubectl port-forward service/podtatohead-podtato-head-entry  -n myapp 9090:9000
+kubectl port-forward svc/tekton-dashboard -n tekton-pipelines 9097:9097
+kubectl port-forward svc/loadgenerator -n myapp 8089:8089
+kubectl port-forward svc/allinone-query -n observability 16686:16686
+kubectl api-resources
+kubectl config view   
+minikube profile list
+
+
+kubectl create secret generic mysql-secret -n myapp --from-literal=mysql-root-password=<value>  --from-literal=mysql-password=<value> --from-literal=mysql-replication-password=<value> 
+
+kubectl port-forward svc/kube-prometheus-stack-prometheus  -n observability 9090:9090
+kubectl port-forward svc/kube-prometheus-stack-grafana :80 -n observability
+kubectl port-forward svc/elasticsearch-master  -n myapp :9200
+
+ helm search hub mysql
+ helm search repo mysql
+ helm repo ls
+ helm status my-sql -n myapp 
+
+ kubectl exec -it mysql-0 -n myapp -- bash 
+ mysql -u<user> -p my_database
+ CREATE TABLE test (id INT, name VARCHAR(20), email VARCHAR(20));
+ CREATE TABLE authors (id INT, name VARCHAR(20), book_title VARCHAR(50));
+ INSERT INTO test (id,name,email) VALUES(1,"Vivek","xuz@abc.com");
+ INSERT INTO test (id,name,email) VALUES(2,"Priya","p@gmail.com");
+INSERT INTO test (id,name,email) VALUES(3,"Tom","tom@yahoo.com");
+
+INSERT INTO authors (id,name,book_title) VALUES(1,"Vivek","Haunted House");
+ INSERT INTO authors (id,name,book_title) VALUES(2,"Priya","Goosebumps, Ep 1");
+INSERT INTO authors (id,name,book_title) VALUES(3,"Tom","A walk to remember");
+INSERT INTO authors (id,name,book_title) VALUES(4,"Dian","Deutsch ist gut");
+ SHOW TABLES;
+
+ ID: 14031, 14057, 7362 - Grafana custom dashboards ID
+
+ kubectl replace -f /workspaces/Module3/environments/overlays/base/grafana-agent-metrics.yaml --force 
+ kubectl apply -f /workspaces/Module3/environments/overlays/base/grafana-agent-metrics.yaml
+ kubectl apply -f /workspaces/Module3/environments/annotations/development/observability.yaml
+ watch kubectl get po -n myapp
+ kubectl get po  -n myapp
+ kubectl logs grafana-agent-0 -n myapp
+ 

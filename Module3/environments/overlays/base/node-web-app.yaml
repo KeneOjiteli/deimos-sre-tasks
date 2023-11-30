@@ -33,8 +33,8 @@ spec:
           # The container registry where the container is located.
           repository: localhost:5000/node-web-app
           # The container image tag
-          tag: 0.0.1
-          # tag: 0.0.2
+          # tag: 0.0.1
+          tag: 0.0.2
         livenessProbe: {}  
         podAnnotations:
              instrumentation.opentelemetry.io/inject-sdk: observability/instrumentation    

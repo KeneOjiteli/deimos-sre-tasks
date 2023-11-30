@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  annotations:
+    deimos.io/environment-local: deploy
+  name: mysql-exporter
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: kene-cicd-project
+  source:
+    # chart: prometheus-mysql-exporter
+    # repoURL: https://prometheus-community.github.io/helm-charts
+    repoURL: https://github.com/DeimosCloud/kene-cicd.git 
+    path: src/mysql-exporter
+    targetRevision: HEAD
+    # targetRevision: 0.15.0
+    helm:
+      values: |
+        fullnameOverride: mysql-exporter
+        livenessProbe: {}
+        readinessProbe: {}
+        mysql:
+          db: my_database
+          host: mysql.myapp
+          port: 3306
+          protocol: TCP
+          user: root
+          # This field references a k8s secret that contains only the password for the MySQL user
+          existingPasswordSecret:
+            name: mysql-secret
+            key: mysql-root-password
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: myapp
+  syncPolicy:
+    automated:
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: -1
+

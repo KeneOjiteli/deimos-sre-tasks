@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  annotations:
+    deimos.io/environment-local: deploy
+  name: kibana
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  # The project the application belongs to.
+  project: kene-cicd-project
+  source:
+    repoURL: https://helm.elastic.co
+    targetRevision: 8.5.1
+    # The helm chart that will deploy this application.
+    chart: kibana
+    helm:
+     values: |
+          xpack.security.authc.providers:
+            saml.saml1:
+              order: 0
+              realm: saml1
+              description: "Log in with Elastic"
+            basic.basic1:
+              order: 1
+
+  # Destination cluster and namespace to deploy the application
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: myapp
+  syncPolicy:
+    automated:
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: -1
